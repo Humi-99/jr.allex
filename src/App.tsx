@@ -440,12 +440,12 @@ function App() {
           <div className="text-center space-y-8">
             <div className="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl p-8 max-w-md mx-auto transform animate-pulse shadow-2xl">
               <h2 className="text-3xl font-bold text-white mb-4">🎉 Congratulations! 🎉</h2>
-              <div className="text-3xl font-bold text-white mb-2">
-                {lastWin?.reward}
+              <div className="text-6xl font-bold text-white mb-2">
+                {lastWin?.coins.toLocaleString()}
               </div>
-              <div className="text-2xl text-white mb-4">WHITELIST WON!</div>
+              <div className="text-2xl text-white mb-4">COINS WON!</div>
               <div className="text-lg text-white opacity-90">
-                Project: {lastWin?.project}
+                Multiplier: {lastWin?.multiplier}
               </div>
             </div>
             
@@ -453,8 +453,8 @@ function App() {
               onClick={claimCoins}
               className="bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white font-bold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center space-x-2 mx-auto animate-bounce"
             >
-              <Sparkles className="w-6 h-6" />
-              <span>Claim Whitelist</span>
+              <Coins className="w-6 h-6" />
+              <span>Claim Coins</span>
             </button>
           </div>
         </div>
@@ -501,7 +501,7 @@ function App() {
             <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-8 max-w-md mx-auto shadow-2xl">
               <h2 className="text-3xl font-bold text-white mb-4">✅ Coins Claimed! ✅</h2>
               <div className="text-xl text-white">
-                {lastWin?.coins.toLocaleString()} spin power has been added to your balance!
+                {lastWin?.reward} has been added to your collection!
               </div>
             </div>
             

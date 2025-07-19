@@ -82,7 +82,7 @@ function App() {
       }
       
       setGameState('connected');
-      setBalance(0); // Reset game balance (separate from ETH balance)
+      setSpinPower(0); // Reset game balance (separate from ETH balance)
     } catch (err: any) {
       setError(err.message);
       console.error('Wallet connection failed:', err);

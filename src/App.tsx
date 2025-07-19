@@ -377,8 +377,8 @@ function App() {
                 isSwitchingNetwork={isSwitchingNetwork}
               />
               <div className="bg-black bg-opacity-30 rounded-lg px-4 py-2 flex items-center space-x-2 text-white">
-                <Coins className="w-5 h-5 text-yellow-400" />
-                <span className="font-bold">{balance.toLocaleString()} coins</span>
+                <span className="text-purple-400">⚡</span>
+                <span className="font-bold">{spinPower} spin power</span>
               </div>
             </div>
             

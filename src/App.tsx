@@ -480,7 +480,7 @@ function App() {
             <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-8 max-w-md mx-auto shadow-2xl">
               <h2 className="text-3xl font-bold text-white mb-4">✅ Coins Claimed! ✅</h2>
               <div className="text-xl text-white">
-                {lastWin?.coins.toLocaleString()} coins have been added to your balance!
+                {lastWin?.coins.toLocaleString()} spin power has been added to your balance!
               </div>
             </div>
             

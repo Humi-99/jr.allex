@@ -7,26 +7,29 @@ import { TokenInfo } from './components/TokenInfo';
 type GameState = 'disconnected' | 'connected' | 'spinning' | 'won' | 'claimed';
 
 interface SpinResult {
-  coins: number;
-  multiplier: string;
+  reward: string;
+  project: string;
   color: string;
 }
 
-const SPIN_REWARDS = [
-  { coins: 10, multiplier: '1x', color: 'bg-blue-500' },
-  { coins: 25, multiplier: '2x', color: 'bg-green-500' },
-  { coins: 50, multiplier: '5x', color: 'bg-yellow-500' },
-  { coins: 100, multiplier: '10x', color: 'bg-purple-500' },
-  { coins: 250, multiplier: '25x', color: 'bg-pink-500' },
-  { coins: 500, multiplier: '50x', color: 'bg-red-500' },
-  { coins: 1000, multiplier: '100x', color: 'bg-orange-500' },
-  { coins: 2500, multiplier: '250x', color: 'bg-indigo-500' },
+const NFT_WHITELIST_REWARDS = [
+  { reward: 'Jog NFT WL', project: 'Jog', color: 'bg-blue-500' },
+  { reward: 'Mulunduch NFT WL', project: 'Mulunduch', color: 'bg-green-500' },
+  { reward: 'Pingo NFT WL', project: 'Pingo', color: 'bg-yellow-500' },
+  { reward: 'GTD NFT WL', project: 'GTD', color: 'bg-purple-500' },
+  { reward: 'Bored Apes NFT WL', project: 'BAYC', color: 'bg-pink-500' },
+  { reward: 'CryptoPunks NFT WL', project: 'Punks', color: 'bg-red-500' },
+  { reward: 'Azuki NFT WL', project: 'Azuki', color: 'bg-orange-500' },
+  { reward: 'Doodles NFT WL', project: 'Doodles', color: 'bg-indigo-500' },
+  { reward: 'Moonbirds NFT WL', project: 'Moonbirds', color: 'bg-cyan-500' },
+  { reward: 'CloneX NFT WL', project: 'CloneX', color: 'bg-emerald-500' },
+  { reward: 'Pudgy Penguins NFT WL', project: 'Pudgy', color: 'bg-teal-500' },
+  { reward: 'DeGods NFT WL', project: 'DeGods', color: 'bg-amber-500' },
 ];
 
 function App() {
   const [gameState, setGameState] = useState<GameState>('disconnected');
   const [walletInfo, setWalletInfo] = useState<WalletInfo | null>(null);
-  const [balance, setBalance] = useState(0);
   const [lastWin, setLastWin] = useState<SpinResult | null>(null);
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
@@ -34,7 +37,7 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [showTokenInfo, setShowTokenInfo] = useState(false);
   const [claimSuccess, setClaimSuccess] = useState<string | null>(null);
-  const [gamePoints, setGamePoints] = useState(0);
+  const [spinPower, setSpinPower] = useState(0);
   const [isSwitchingNetwork, setIsSwitchingNetwork] = useState(false);
 
   useEffect(() => {
@@ -92,8 +95,7 @@ function App() {
     walletService.disconnect();
     setWalletInfo(null);
     setGameState('disconnected');
-    setBalance(0);
-    setGamePoints(0);
+    setSpinPower(0);
     setError(null);
     setShowTokenInfo(false);
   };
@@ -121,7 +123,7 @@ function App() {
   };
 
   const handlePointsConverted = (points: number, tokens: string) => {
-    setGamePoints(prev => prev - points);
+    setSpinPower(prev => prev - points);
     setClaimSuccess(`Successfully converted ${points} points to ${tokens} SPIN tokens!`);
     setTimeout(() => setClaimSuccess(null), 5000);
   };
@@ -149,16 +151,18 @@ function App() {
     setGameState('spinning');
     
     // Generate random result
-    const result = SPIN_REWARDS[Math.floor(Math.random() * SPIN_REWARDS.length)];
+    const result = NFT_WHITELIST_REWARDS[Math.floor(Math.random() * NFT_WHITELIST_REWARDS.length)];
     
     // Calculate rotation (multiple full rotations + final position)
-    const finalRotation = rotation + 1440 + Math.random() * 360;
+    const segmentAngle = 360 / NFT_WHITELIST_REWARDS.length;
+    const selectedIndex = NFT_WHITELIST_REWARDS.indexOf(result);
+    const finalRotation = rotation + 1440 + (selectedIndex * segmentAngle) + Math.random() * segmentAngle;
     setRotation(finalRotation);
     
     // Wait for animation to complete
     setTimeout(() => {
       setLastWin(result);
-      setGamePoints(prev => prev + result.coins); // Add game points
+      setSpinPower(prev => prev + 100); // Add spin power for winning
       setIsSpinning(false);
       setGameState('won');
     }, 3000);
@@ -166,39 +170,56 @@ function App() {
 
   const claimCoins = () => {
     if (lastWin) {
-      setBalance(balance + lastWin.coins);
       setGameState('claimed');
       setTimeout(() => setGameState('connected'), 2000);
     }
   };
 
   const SpinWheel = () => (
-    <div className="relative w-80 h-80 mx-auto">
+    <div className="relative w-96 h-96 mx-auto">
       <div 
-        className="w-full h-full rounded-full border-8 border-gray-300 relative overflow-hidden transition-transform duration-3000 ease-out shadow-2xl"
+        className="w-full h-full rounded-full border-8 border-yellow-400 relative overflow-hidden transition-transform duration-3000 ease-out shadow-2xl"
         style={{ transform: `rotate(${rotation}deg)` }}
       >
-        {SPIN_REWARDS.map((reward, index) => (
+        {NFT_WHITELIST_REWARDS.map((reward, index) => {
+          const segmentAngle = 360 / NFT_WHITELIST_REWARDS.length;
+          const rotation = index * segmentAngle;
+          
+          return (
           <div
             key={index}
-            className={`absolute w-full h-full ${reward.color} opacity-80`}
+            className={`absolute w-full h-full ${reward.color} opacity-90 flex items-start justify-center`}
             style={{
-              transform: `rotate(${index * 45}deg)`,
-              clipPath: 'polygon(50% 50%, 50% 0%, 85.36% 14.64%)'
+              transform: `rotate(${rotation}deg)`,
+              clipPath: `polygon(50% 50%, 50% 0%, ${50 + 50 * Math.cos((segmentAngle * Math.PI) / 180)}% ${50 - 50 * Math.sin((segmentAngle * Math.PI) / 180)}%)`
             }}
           >
-            <div className="absolute top-8 left-1/2 transform -translate-x-1/2 text-white font-bold text-sm">
-              {reward.multiplier}
+            <div 
+              className="absolute top-6 left-1/2 transform -translate-x-1/2 text-white font-bold text-xs text-center leading-tight"
+              style={{ 
+                transform: `rotate(${segmentAngle / 2}deg)`,
+                width: '80px'
+              }}
+            >
+              <div className="text-[10px] font-extrabold drop-shadow-lg">
+                {reward.project}
+              </div>
+              <div className="text-[8px] font-semibold opacity-90">
+                NFT WL
+              </div>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
       
       {/* Center pointer */}
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full border-4 border-gray-800 z-10 shadow-lg"></div>
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full border-4 border-gray-800 z-10 shadow-lg flex items-center justify-center">
+        <div className="w-2 h-2 bg-white rounded-full"></div>
+      </div>
       
       {/* Top pointer */}
-      <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-0 h-0 border-l-4 border-r-4 border-b-8 border-l-transparent border-r-transparent border-b-gray-800 z-10"></div>
+      <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-0 h-0 border-l-6 border-r-6 border-b-12 border-l-transparent border-r-transparent border-b-yellow-400 z-10 drop-shadow-lg"></div>
     </div>
   );
 
@@ -241,7 +262,7 @@ function App() {
               />
               <div className="bg-black bg-opacity-30 rounded-lg px-4 py-2 flex items-center space-x-2 text-white">
                 <span className="text-purple-400">⚡</span>
-                <span className="font-bold">{gamePoints} spin power</span>
+                <span className="font-bold">{spinPower} spin power</span>
               </div>
             </div>
             
@@ -298,7 +319,7 @@ function App() {
               <div className="mb-6">
                 <TokenInfo 
                   walletAddress={walletInfo.address}
-                  gamePoints={gamePoints}
+                  gamePoints={spinPower}
                   onClaimSuccess={handleClaimSuccess}
                   onPointsConverted={handlePointsConverted}
                 />
@@ -320,12 +341,12 @@ function App() {
             </button>
             
             {/* Reward Display */}
-            <div className="grid grid-cols-4 gap-4 max-w-2xl mx-auto">
-              {SPIN_REWARDS.map((reward, index) => (
-                <div key={index} className="bg-black bg-opacity-30 rounded-lg p-3 text-center hover:bg-opacity-40 transition-all">
+            <div className="grid grid-cols-3 gap-3 max-w-4xl mx-auto">
+              {NFT_WHITELIST_REWARDS.map((reward, index) => (
+                <div key={index} className="bg-black bg-opacity-30 rounded-lg p-3 text-center hover:bg-opacity-40 transition-all border border-gray-600">
                   <div className={`w-full h-2 ${reward.color} rounded mb-2`}></div>
-                  <div className="text-white font-bold">{reward.multiplier}</div>
-                  <div className="text-yellow-400 text-sm">{reward.coins} coins</div>
+                  <div className="text-white font-bold text-sm">{reward.project}</div>
+                  <div className="text-yellow-400 text-xs">NFT Whitelist</div>
                 </div>
               ))}
             </div>
